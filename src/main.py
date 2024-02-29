@@ -16,7 +16,10 @@ def main():
 
 
 def debug_mode(oa, args):
-    oa.create_reminder(args["command"])
+    command = args["command"]
+    if not command:
+        command = input()
+    oa.create_reminder(command)
     # folder_name = "RSS-подписки"
     # selected_mails = oaut.select_mails(folder_name, 9)
     # print(selected_mails)
