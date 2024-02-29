@@ -39,20 +39,22 @@ class OutlookAutomator:
     def acc_root(self):
         return self.account.root
 
-    def select_mails(self, folder_name, last_n):
+    def select_mails(self, command):
+        invalid_input = f"Invalid input: `{command}` should contain at least folder and number of messages to retrieve"
+        lines = self.__validate_command(command, 2, invalid_input)
+
+        folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
 
-        return [(item.subject, item.sender, item.datetime_received)
-                for item in folder.all().order_by("-datetime_received")[:last_n]]
+        last_n = int(lines[1].strip())
+        messages = [(item.subject, item.sender, item.datetime_received)
+                    for item in folder.all().order_by("-datetime_received")[:last_n]]
 
-    def create_reminder(self, in_str):
-        invalid_input = f"Invalid input: `{in_str}` should contain at least time and subject"
-        if not in_str:
-            raise ValueError(invalid_input)
+        return messages
 
-        lines = in_str.split(const.TASK_SUBJECT_SPLITTER)
-        if len(lines) < 2:
-            raise ValueError(invalid_input)
+    def create_reminder(self, command):
+        invalid_input = f"Invalid input: `{command}` should contain at least time and subject"
+        lines = self.__validate_command(command, 2, invalid_input)
 
         dt = lines[0].strip()
         if len(dt) == 1 and dt.isdigit():
@@ -147,3 +149,14 @@ class OutlookAutomator:
             return re.sub(r"\n{2,}", "\n", text)
         else:
             return ""
+
+    @staticmethod
+    def __validate_command(command, no_lines, err_msg):
+        if not command:
+            raise ValueError(err_msg)
+
+        lines = command.split(const.TASK_SUBJECT_SPLITTER)
+        if len(lines) < no_lines:
+            raise ValueError(err_msg)
+
+        return lines

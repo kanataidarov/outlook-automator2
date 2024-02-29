@@ -14,14 +14,13 @@ def main():
         command = input()
 
     if args["debug"]:
-        debug_mode(oa, args)
+        debug_mode(oa, command)
     else:
         oa.create_reminder(command)
 
 
-def debug_mode(oa, args):
-    folder_name = "RSS-подписки"
-    selected_mails = oa.select_mails(folder_name, 9)
+def debug_mode(oa, command):
+    selected_mails = oa.select_mails(command)
     print(selected_mails)
 
 
