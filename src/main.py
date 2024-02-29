@@ -16,9 +16,10 @@ def main():
 
 
 def debug_mode(oaut):
-    folder_name = "RSS-подписки"
-    selected_mails = oaut.select_mails(folder_name, 9)
-    print(selected_mails)
+    oaut.create_reminder(input())
+    # folder_name = "RSS-подписки"
+    # selected_mails = oaut.select_mails(folder_name, 9)
+    # print(selected_mails)
 
 
 if __name__ == "__main__":

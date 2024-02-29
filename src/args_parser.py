@@ -22,6 +22,10 @@ class ArgsParser:
                                 type=str, help=Optionals.EWS_URL["help"])
         arg_parser.add_argument(Optionals.AUTH_TYPE["name"], default=Optionals.AUTH_TYPE["default"],
                                 type=str, help=Optionals.AUTH_TYPE["help"])
+        arg_parser.add_argument(Optionals.OUTLOOK_ROOT["name"], default=Optionals.OUTLOOK_ROOT["default"],
+                                type=str, help=Optionals.OUTLOOK_ROOT["help"])
+        arg_parser.add_argument(Optionals.EXISTING_TASKS["name"], default=Optionals.EXISTING_TASKS["default"],
+                                type=str, help=Optionals.EXISTING_TASKS["help"])
 
         parsed_args = arg_parser.parse_args()
 
@@ -29,7 +33,9 @@ class ArgsParser:
                 "paswd": parsed_args.paswd,
                 "debug": to_bool(parsed_args.debug),
                 "ews_url": parsed_args.ews_url,
-                "auth_type": parsed_args.auth_type}
+                "auth_type": parsed_args.auth_type,
+                "outlook_root": parsed_args.outlook_root,
+                "existing_tasks": parsed_args.existing_tasks}
 
         return args
 
