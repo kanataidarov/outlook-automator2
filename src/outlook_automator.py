@@ -46,9 +46,13 @@ class OutlookAutomator:
                 for item in folder.all().order_by("-datetime_received")[:last_n]]
 
     def create_reminder(self, in_str):
+        invalid_input = f"Invalid input: `{in_str}` should contain at least time and subject"
+        if not in_str:
+            raise ValueError(invalid_input)
+
         lines = in_str.split(const.TASK_SUBJECT_SPLITTER)
         if len(lines) < 2:
-            raise ValueError(f"Invalid input: `{in_str}` should contain at least time and subject")
+            raise ValueError(invalid_input)
 
         dt = lines[0].strip()
         if len(dt) == 1 and dt.isdigit():
