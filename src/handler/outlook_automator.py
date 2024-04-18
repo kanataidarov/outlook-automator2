@@ -17,7 +17,7 @@ class OutlookAutomator:
     def __init__(self, args):
         self.args = args
         self.account = self.__authenticate()
-        self.tz = zoneinfo.ZoneInfo('Asia/Almaty')
+        self.tz = zoneinfo.ZoneInfo('Asia/Aqtobe')
 
     def __authenticate(self):
         credentials = Credentials(self.args["email"], self.args["paswd"])
@@ -47,7 +47,7 @@ class OutlookAutomator:
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
 
         last_n = int(lines[1].strip())
-        messages = [(item.subject, item.sender.name, to_dt_str(item.datetime_received))
+        messages = [(item.subject, item.sender.name, to_dt_str(item.datetime_received, self.tz))
                     for item in folder.all().order_by("-datetime_received")[:last_n]]
 
         return messages
