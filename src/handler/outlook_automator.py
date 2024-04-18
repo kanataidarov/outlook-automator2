@@ -1,13 +1,13 @@
-import json
-import re
-import zoneinfo
-from datetime import datetime, timedelta
-
+from ..const import const
+from ..util.local_util import to_dt_str
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 from exchangelib import Credentials, Configuration, Account, DELEGATE
 from exchangelib.items import Task
 
-import const
+import json
+import re
+import zoneinfo
 
 
 class OutlookAutomator:
@@ -47,7 +47,7 @@ class OutlookAutomator:
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
 
         last_n = int(lines[1].strip())
-        messages = [(item.subject, item.sender, item.datetime_received)
+        messages = [(item.subject, item.sender.name, to_dt_str(item.datetime_received))
                     for item in folder.all().order_by("-datetime_received")[:last_n]]
 
         return messages

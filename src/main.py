@@ -1,8 +1,8 @@
 import os
 import sys
 
-from args_parser import ArgsParser
-from outlook_automator import OutlookAutomator
+from src.config.args_parser import ArgsParser
+from src.handler.outlook_automator import OutlookAutomator
 
 
 def main():
@@ -21,7 +21,8 @@ def main():
 
 def debug_mode(oa, command):
     selected_mails = oa.select_mails(command)
-    print(selected_mails)
+    for mail in selected_mails:
+        print(mail)
 
 
 if __name__ == "__main__":
