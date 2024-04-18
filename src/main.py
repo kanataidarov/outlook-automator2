@@ -20,10 +20,11 @@ def main():
 
 
 def debug_mode(oa, command):
-    selected_mails = oa.select_mails(command)
+    # selected_mails = oa.select_mails(command)
+    # oa.mark_read(selected_mails)
+    # oa.delete(selected_mails)
 
-    oa.mark_read(selected_mails)
-    oa.delete(selected_mails)
+    oa.bulk_delete(command)
 
 
 if __name__ == "__main__":

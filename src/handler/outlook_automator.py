@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from exchangelib import Account, Credentials, Configuration, DELEGATE, Message
 from exchangelib.items import Task
-from loguru import logger
+from loguru import logger as log
 
 import json
 import re
@@ -40,17 +40,17 @@ class OutlookAutomator:
         return self.account.root
 
     def select_mails(self, command):
-        invalid_input = f"Invalid input: `{command}` should contain at least folder and number of messages to retrieve"
-        lines = self.__validate_command(command, 2, invalid_input)
-
+        invalid_input = (f"Invalid input: `{command}` should contain folder name, search string"
+                         f" and number of messages to retrieve")
+        lines = self.__validate_command(command, 3, invalid_input)
         folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
-
         body_contains = lines[1].strip()
         last_n = int(lines[2].strip())
+
         messages = [item for item in folder.filter(body__contains=body_contains)[:last_n]]
 
-        logger.info(f"Selected {len(messages)} messages in folder `{folder_name}`")
+        log.info(f"Selected {len(messages)} messages in folder `{folder_name}`")
 
         return messages
 
@@ -60,8 +60,8 @@ class OutlookAutomator:
             if isinstance(item, Message):
                 item.is_read = True
                 item.save()
-                logger.info(f"Marked message {idx} - `{item.subject}` as read")
-        logger.success(f"Marked {len(messages)} messages as read")
+                log.info(f"Marked message {idx} - `{item.subject}` as read")
+        log.success(f"Marked {len(messages)} messages as read")
 
     @staticmethod
     def delete(messages):
@@ -70,8 +70,21 @@ class OutlookAutomator:
             if isinstance(item, Message) and item.is_read:
                 item.delete()
                 count += 1
-                logger.info(f"Deleted message {count} - `{item.subject}`")
-        logger.success(f"Deleted {count} already read messages")
+                log.info(f"Deleted message {count} - `{item.subject}`")
+        log.success(f"Deleted {count} already read messages")
+
+    def bulk_delete(self, command):
+        invalid_input = f"Invalid input: `{command}` should contain folder name and search string"
+        lines = self.__validate_command(command, 2, invalid_input)
+        folder_name = lines[0].strip()
+        folder = self.acc_root() / self.args["outlook_root"] / folder_name
+        body_contains = lines[1].strip()
+
+        count = len(folder.filter(body__contains=body_contains).delete(page_size=9999, chunk_size=999))
+
+        log.success(f"Deleted {count} messages in folder `{folder_name}`")
+
+        return count
 
     def create_reminder(self, command):
         invalid_input = f"Invalid input: `{command}` should contain at least time and subject"
@@ -96,7 +109,7 @@ class OutlookAutomator:
         task.reminder_is_set = True
         task.save()
 
-        logger.success(f"Updated reminder for task `{task.subject.name}`")
+        log.success(f"Updated reminder for task `{task.subject.name}`")
 
     @staticmethod
     def __create_subject(task, lines):
