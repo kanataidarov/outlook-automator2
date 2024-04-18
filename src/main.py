@@ -21,8 +21,8 @@ def main():
 
 def debug_mode(oa, command):
     selected_mails = oa.select_mails(command)
-    for mail in selected_mails:
-        print(mail)
+
+    oa.mark_read(selected_mails)
 
 
 if __name__ == "__main__":
