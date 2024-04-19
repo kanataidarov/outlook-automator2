@@ -45,10 +45,10 @@ class OutlookAutomator:
         lines = self.__validate_command(command, 3, invalid_input)
         folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
-        body_contains = lines[1].strip()
+        filterStr = str(lines[1].strip())
         last_n = int(lines[2].strip())
 
-        messages = [item for item in folder.filter(body__contains=body_contains)[:last_n]]
+        messages = [item for item in folder.filter(filterStr)[:last_n]]
 
         log.info(f"Selected {len(messages)} messages in folder `{folder_name}`")
 
@@ -78,9 +78,9 @@ class OutlookAutomator:
         lines = self.__validate_command(command, 2, invalid_input)
         folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
-        body_contains = lines[1].strip()
+        filterStr = str(lines[1].strip())
 
-        count = len(folder.filter(body__contains=body_contains).delete(page_size=9999, chunk_size=999))
+        count = len(folder.filter(filterStr).delete(page_size=9999, chunk_size=999))
 
         log.success(f"Deleted {count} messages in folder `{folder_name}`")
 
