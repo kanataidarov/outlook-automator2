@@ -80,7 +80,7 @@ class OutlookAutomator:
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
         filter_str = str(lines[1].strip())
 
-        count = len(folder.self.__apply_filter(folder, filter_str).delete(page_size=9999, chunk_size=999))
+        count = len(self.__apply_filter(folder, filter_str).delete(page_size=9999, chunk_size=999))
 
         log.success(f"Deleted {count} messages in folder `{folder_name}`")
 
