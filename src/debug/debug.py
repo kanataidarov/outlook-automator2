@@ -6,4 +6,4 @@ def debug_mode(oa, command):
     # oa.delete(selected_mails)
 
     # oa.bulk_delete(command)
-    # oa.folders()
+    oa.folders()
