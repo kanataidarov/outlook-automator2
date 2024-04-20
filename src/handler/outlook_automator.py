@@ -1,7 +1,7 @@
 from ..const import const
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-from exchangelib import Account, Credentials, Configuration, DELEGATE, Message
+from exchangelib import Account, Credentials, Configuration, DELEGATE, Message, EWSDateTime
 from exchangelib.items import Task
 from loguru import logger as log
 
@@ -45,10 +45,10 @@ class OutlookAutomator:
         lines = self.__validate_command(command, 3, invalid_input)
         folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
-        filterStr = str(lines[1].strip())
+        filter_str = str(lines[1].strip())
         last_n = int(lines[2].strip())
 
-        messages = [item for item in folder.filter(filterStr)[:last_n]]
+        messages = [item for item in self.__apply_filter(folder, filter_str)[:last_n]]
 
         log.info(f"Selected {len(messages)} messages in folder `{folder_name}`")
 
@@ -78,13 +78,21 @@ class OutlookAutomator:
         lines = self.__validate_command(command, 2, invalid_input)
         folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
-        filterStr = str(lines[1].strip())
+        filter_str = str(lines[1].strip())
 
-        count = len(folder.filter(filterStr).delete(page_size=9999, chunk_size=999))
+        count = len(folder.self.__apply_filter(folder, filter_str).delete(page_size=9999, chunk_size=999))
 
         log.success(f"Deleted {count} messages in folder `{folder_name}`")
 
         return count
+
+    def folders(self):
+        root = self.acc_root() / self.args["outlook_root"]
+        folders = []
+        for folder in root.walk():
+            folders.append(folder.name)
+        log.debug(f"Folders: {folders}")
+        return folders
 
     def create_reminder(self, command):
         invalid_input = f"Invalid input: `{command}` should contain at least time and subject"
@@ -196,3 +204,13 @@ class OutlookAutomator:
             raise ValueError(err_msg)
 
         return lines
+
+    def __apply_filter(self, folder, filter_str):
+        if filter_str.lower().startswith("upto:"):
+            return folder.filter(datetime_received__lt=self.__extract_dt(filter_str))
+        else:
+            return folder.filter(filter_str)
+
+    def __extract_dt(self, filter_str):
+        dt = datetime.strptime(filter_str.lower().removeprefix("upto:"), "%Y-%m-%d")
+        return EWSDateTime(dt.year, dt.month, dt.day, 0, 0, tzinfo=self.tz)
