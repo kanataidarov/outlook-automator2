@@ -1,6 +1,6 @@
-from ..config.custom_argparse import CustomArgparseFormatter
-from ..const.const import Optionals, Positionals
-from ..util.global_util import to_bool
+from .custom_argparse import CustomArgparseFormatter
+from src.const.const import Positionals, Optionals
+from src.util.global_util import to_bool
 from argparse import ArgumentParser
 
 

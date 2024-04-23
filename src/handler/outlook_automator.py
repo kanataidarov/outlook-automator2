@@ -1,4 +1,4 @@
-from ..const import const
+from src.const import const
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from exchangelib import Account, Credentials, Configuration, DELEGATE, Message, EWSDateTime

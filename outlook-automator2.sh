@@ -1,1 +1,1 @@
-python src/main.py "$1" "$2" false --ews_url "$3" --command "$4"
+python -m src.main "$1" "$2" false --ews_url "$3" --command "$4"
