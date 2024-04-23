@@ -117,7 +117,7 @@ class OutlookAutomator:
         task.reminder_is_set = True
         task.save()
 
-        log.success(f"Updated reminder for task `{task.subject.name}`")
+        log.success(f"Updated reminder for task `{task.subject}`")
 
     @staticmethod
     def __create_subject(task, lines):
