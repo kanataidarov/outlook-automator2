@@ -78,9 +78,11 @@ class OutlookAutomator:
         lines = self.__validate_command(command, 2, invalid_input)
         folder_name = lines[0].strip()
         folder = self.acc_root() / self.args["outlook_root"] / folder_name
-        filter_str = str(lines[1].strip())
 
-        count = len(self.__apply_filter(folder, filter_str).delete(page_size=9999, chunk_size=999))
+        count = 0
+        for i in range(1, len(lines)):
+            filter_str = str(lines[i].strip())
+            count += len(self.__apply_filter(folder, filter_str).delete(page_size=9999, chunk_size=999))
 
         log.success(f"Deleted {count} messages in folder `{folder_name}`")
 
@@ -183,6 +185,8 @@ class OutlookAutomator:
         Returns:
             The text content of the body.
         """
+        if not html:
+            return ""
         if not ('<' in html and '>' in html):
             return html
 
