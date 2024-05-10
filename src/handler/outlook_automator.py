@@ -110,6 +110,15 @@ class OutlookAutomator:
             task.body = self.__add_lines_to_body(body, lines[1:])
 
             task.reminder_due_by = self.__create_dt(existing_task["dt"])
+        elif len(dt) == 2 and not dt.isdigit():
+            existing_tasks = json.loads(self.args["existing_tasks"])
+            existing_task = next(task for task in existing_tasks if task["alias"] == dt[1])
+
+            task = self.account.tasks.filter(subject=existing_task["subject"])[0]
+            body = self.__extract_body_text(task.body)
+            task.body = self.__add_lines_to_body(body, lines[1:])
+
+            task.reminder_due_by = self.__create_dt(dt[0] + existing_task["dt"])
         else:
             task = Task(folder=self.account.tasks)
             self.__create_subject(task, lines[1:])
@@ -137,6 +146,7 @@ class OutlookAutomator:
                 datetime containing parts of parsed dt string.
         """
         day = datetime.now() + timedelta(days=1)
+        print(dt)
         if not dt[0].isdigit():
             if dt[0] not in {'n', 't', 'a'}:
                 raise ValueError("Time prefix should be one of the following: n, t, a")
